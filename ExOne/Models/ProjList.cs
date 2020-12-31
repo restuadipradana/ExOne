@@ -25,6 +25,7 @@ namespace ExOne.Models
         public string TestDateEstimate { get; set; }
         public string ApplyDate { get; set; }
         public string Memo { get; set; }
+        public string FileName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

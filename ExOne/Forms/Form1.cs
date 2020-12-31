@@ -41,7 +41,7 @@ namespace ExOne
                 UpdatedAt = DateTime.Now
             };
 
-            DbContext.GetInstance().GetCollection<ProjList>().Insert(pl);
+            //DbContext.GetInstance().GetCollection<ProjList>().Insert(pl);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -85,12 +85,14 @@ namespace ExOne
         private void button4_Click(object sender, EventArgs e)
         {
             var filePath = textBox1.Text;
+            
             if (filePath == null)
             {
                 MessageBox.Show("Please select file first!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
+                var fileName = Path.GetFileName(filePath);
                 var excelFile = new FileInfo(filePath);
                 using (var p = new ExcelPackage(excelFile))
                 {
@@ -98,14 +100,14 @@ namespace ExOne
                     var endrow = ws.Dimension.End.Row;
                     var endcol = 14;
 
-                    for (int row = 2; row <= endrow; row++)//looking for article row
+                    for (int row = 2; row <= endrow; row++)
                     {
-                        List<string> kind = new List<string>(); //Article
+                        List<string> kind = new List<string>();
                         for (int col = 1; col <= endcol; col++)
                         {
                             if (ws.Cells[row, col].Value != null)
                             {
-                                kind.Add(ws.Cells[row, col].Value.ToString()); //Model Name
+                                kind.Add(ws.Cells[row, col].Value.ToString());
                             }
                             else
                             {
@@ -128,14 +130,52 @@ namespace ExOne
                             TestDateEstimate = kind[11],
                             ApplyDate = kind[12],
                             Memo = kind[13],
+                            FileName = fileName,
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         };
                         DbContext.GetInstance().GetCollection<ProjList>().Insert(pl);
                         kind.Clear();
+                        if (ws.Cells[row + 1, 7].Value == null)
+                        {
+                            break;
+                        }
                     }
                 }
             }
+        }
+
+        private List<ProjList> GetAll()
+        {
+            var list = new List<ProjList>();
+            
+            var col = DbContext.GetInstance().GetCollection<ProjList>();
+            //select * from K_tbl where k18 in (select max(k18) from K_tbl group by k06, k08)
+            var awx = (from x in col.FindAll().OrderByDescending(d => d.CreatedAt)
+                       group x by new { x.ReqFormNo, x.Stage }
+                      into xx
+                      select new { 
+                          //ReqFormNo = xx.Key.ReqFormNo, 
+                          //dt = (from x2 in xx select x2.CreatedAt).Max() 
+                          ReqNo = xx.Key,
+                          DT = xx.Max(m => m.CreatedAt)
+                      })
+                      .ToArray();
+            
+            var detx = from x in col.FindAll()
+                       where awx.Any(m => m.DT == x.CreatedAt)
+                       select x;
+            foreach (ProjList _id in col.FindAll())
+            {
+                list.Add(_id);
+            }
+            
+            return list;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = GetAll();
         }
     }
 }
