@@ -1,4 +1,5 @@
 ﻿using ExOne.Models;
+using LiteDB;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -201,38 +202,56 @@ namespace ExOne
             dataGridView1.Columns[3].Width = 120;
             dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             level = 1;
+            //dataGridView1.Columns[2].SortMode = DataGridViewColumnSortMode.Automatic;
+            //foreach (DataGridViewColumn column in dataGridView1.Columns)
+            //{
+            //    column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            //}
         }
 
-        private void Get2List()
+        private void Get2List() //L2
         {
-            var list = new List<L1list>();
-            var all = GetAll(2);
-            var ab = (from a in all
-                     where a.id == _id
-                     select a).FirstOrDefault();
-            var ac = (from b in all
+            var col = DbContext.GetInstance().GetCollection<ProjList>();
+            var ab = col.FindById(_id);
+            var ac = (from b in GetAll(2)
                      where b.ReqFormDesc == ab.ReqFormDesc && b.ReqFormNo == ab.ReqFormNo
                      select b).ToList();
             dataGridView1.DataSource = null;
             dataGridView1.Refresh();
             dataGridView1.DataSource = ac;
-            dataGridView1.Columns[0].Visible = false;
+            for (var i = 0; i<=3;i++)
+            {
+                dataGridView1.Columns[i].Visible = false;
+            }
+            dataGridView1.Columns[15].Visible = false;
+            dataGridView1.Columns[17].Visible = false;
+            level = 2;
+
+        }
+
+        private void Get3List() //L3
+        {
+            var col = DbContext.GetInstance().GetCollection<ProjList>();
+            var selected = col.FindById(_id);
+            var getData3 = col.Find(z => z.Stage == selected.Stage)
+                .Where(x => x.ReqFormNo == selected.ReqFormNo)
+                .Where(x => x.ReqFormDesc == selected.ReqFormDesc)
+                .OrderByDescending(y => y.CreatedAt).ToList();
+            dataGridView1.DataSource = null;
+            dataGridView1.Refresh();
+            dataGridView1.DataSource = getData3;
+            for (var i = 0; i <= 3; i++)
+            {
+                dataGridView1.Columns[i].Visible = false;
+            }
+            dataGridView1.Columns[15].Visible = false;
+            dataGridView1.Columns[17].Visible = false;
+            level = 3;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             Get1List();
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (level == 1)
-            {
-                label1.Text = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                _id = Guid.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
-                Get2List();
-                level++;
-            }
         }
 
         private void BackBtn_Click(object sender, EventArgs e)
@@ -245,6 +264,29 @@ namespace ExOne
             else if (level == 1)
             {
                 Form1_Load(this, null);
+            }
+            else if (level == 3)
+            {
+                Get2List();
+            }
+        }
+
+        private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+            if (level == 1)
+            {
+                //label1.Text = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+                _id = Guid.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                Get2List();
+                //level++;
+            }
+            else if (level == 2)
+            {
+                _id = Guid.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                Get3List();
+                //level++;
             }
         }
     }
