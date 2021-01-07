@@ -36,9 +36,10 @@ namespace ExOne
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.BackBtn = new System.Windows.Forms.Button();
-            this.L2 = new System.Windows.Forms.Button();
-            this.L3 = new System.Windows.Forms.Label();
+            this.subDgv = new System.Windows.Forms.DataGridView();
+            this.hierarchy = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.subDgv)).BeginInit();
             this.SuspendLayout();
             // 
             // button2
@@ -107,31 +108,31 @@ namespace ExOne
             this.BackBtn.UseVisualStyleBackColor = true;
             this.BackBtn.Click += new System.EventHandler(this.BackBtn_Click);
             // 
-            // L2
+            // subDgv
             // 
-            this.L2.Location = new System.Drawing.Point(153, 12);
-            this.L2.Name = "L2";
-            this.L2.Size = new System.Drawing.Size(270, 23);
-            this.L2.TabIndex = 8;
-            this.L2.Text = "From Desc";
-            this.L2.UseVisualStyleBackColor = true;
+            this.subDgv.BackgroundColor = System.Drawing.Color.Silver;
+            this.subDgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.subDgv.Location = new System.Drawing.Point(37, 56);
+            this.subDgv.Name = "subDgv";
+            this.subDgv.ReadOnly = true;
+            this.subDgv.Size = new System.Drawing.Size(825, 520);
+            this.subDgv.TabIndex = 10;
+            this.subDgv.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.subDgv_CellDoubleClick);
             // 
-            // L3
+            // hierarchy
             // 
-            this.L3.AutoSize = true;
-            this.L3.Location = new System.Drawing.Point(429, 17);
-            this.L3.Name = "L3";
-            this.L3.Size = new System.Drawing.Size(35, 13);
-            this.L3.TabIndex = 9;
-            this.L3.Text = "Stage";
+            this.hierarchy.Location = new System.Drawing.Point(153, 14);
+            this.hierarchy.Name = "hierarchy";
+            this.hierarchy.Size = new System.Drawing.Size(308, 20);
+            this.hierarchy.TabIndex = 11;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(919, 665);
-            this.Controls.Add(this.L3);
-            this.Controls.Add(this.L2);
+            this.Controls.Add(this.hierarchy);
+            this.Controls.Add(this.subDgv);
             this.Controls.Add(this.BackBtn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataGridView1);
@@ -143,6 +144,7 @@ namespace ExOne
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.subDgv)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -156,8 +158,8 @@ namespace ExOne
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button BackBtn;
-        private System.Windows.Forms.Button L2;
-        private System.Windows.Forms.Label L3;
+        private System.Windows.Forms.DataGridView subDgv;
+        private System.Windows.Forms.TextBox hierarchy;
     }
 }
 

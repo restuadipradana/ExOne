@@ -24,7 +24,6 @@ namespace ExOne
         {
             InitializeComponent();
         }
-        public int ax = 0;
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -133,7 +132,7 @@ namespace ExOne
             }
         }
 
-        private List<ProjList> GetAll(int a) // L1
+        private List<ProjList> GetAll(int a) 
         {
             var list = new List<ProjList>();
             
@@ -142,7 +141,7 @@ namespace ExOne
 
             List<DateTime> awx = new List<DateTime>();
 
-            if (a == 1)
+            if (a == 1) //L1
             {
                 awx = (from x in col.FindAll().OrderByDescending(d => d.CreatedAt)
                         group x by new { x.ReqFormNo, x.ReqFormDesc}
@@ -150,7 +149,7 @@ namespace ExOne
                         select xx.Max(m => m.CreatedAt)
                         ).ToList();
             }
-            else if (a == 2)
+            else if (a == 2) //L2
             {
                 awx = (from x in col.FindAll().OrderByDescending(d => d.CreatedAt)
                         group x by new { x.ReqFormNo, x.ReqFormDesc, x.Stage }
@@ -195,38 +194,36 @@ namespace ExOne
 
         private void Get1List()
         {
+            subDgv.Visible = false;
             dataGridView1.DataSource = GetHeaderData();
             dataGridView1.Columns[0].Visible = false;
             dataGridView1.Columns[1].Width = 75;
             dataGridView1.Columns[2].Width = 75;
+            dataGridView1.Columns[2].HeaderText = "IT PIC";
             dataGridView1.Columns[3].Width = 120;
+            dataGridView1.Columns[3].HeaderText = "Request Form No.";
             dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView1.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             level = 1;
-            //dataGridView1.Columns[2].SortMode = DataGridViewColumnSortMode.Automatic;
-            //foreach (DataGridViewColumn column in dataGridView1.Columns)
-            //{
-            //    column.SortMode = DataGridViewColumnSortMode.NotSortable;
-            //}
         }
 
         private void Get2List() //L2
         {
+            subDgv.Visible = true;
             var col = DbContext.GetInstance().GetCollection<ProjList>();
             var ab = col.FindById(_id);
             var ac = (from b in GetAll(2)
                      where b.ReqFormDesc == ab.ReqFormDesc && b.ReqFormNo == ab.ReqFormNo
                      select b).ToList();
-            dataGridView1.DataSource = null;
-            dataGridView1.Refresh();
-            dataGridView1.DataSource = ac;
-            for (var i = 0; i<=3;i++)
-            {
-                dataGridView1.Columns[i].Visible = false;
-            }
-            dataGridView1.Columns[15].Visible = false;
-            dataGridView1.Columns[17].Visible = false;
+            var ad = ac.FirstOrDefault();
+            
+            hierarchy.Text = ad.ReqFormNo + " - " + (ad.ReqFormDesc.Length > 20 ? ad.ReqFormDesc.Substring(0, 20) : ad.ReqFormDesc);
+            subDgv.DataSource = null;
+            subDgv.Refresh();
+            subDgv.DataSource = ac;
+            ColSetting();
             level = 2;
-
         }
 
         private void Get3List() //L3
@@ -237,16 +234,43 @@ namespace ExOne
                 .Where(x => x.ReqFormNo == selected.ReqFormNo)
                 .Where(x => x.ReqFormDesc == selected.ReqFormDesc)
                 .OrderByDescending(y => y.CreatedAt).ToList();
-            dataGridView1.DataSource = null;
-            dataGridView1.Refresh();
-            dataGridView1.DataSource = getData3;
+            subDgv.DataSource = null;
+            subDgv.Refresh();
+            subDgv.DataSource = getData3;
+            ColSetting();
+            level = 3;
+        }
+
+        private void ColSetting()
+        {
             for (var i = 0; i <= 3; i++)
             {
-                dataGridView1.Columns[i].Visible = false;
+                subDgv.Columns[i].Visible = false;
             }
-            dataGridView1.Columns[15].Visible = false;
-            dataGridView1.Columns[17].Visible = false;
-            level = 3;
+            subDgv.Columns[15].Visible = false;
+            subDgv.Columns[17].Visible = false;
+            subDgv.Columns[4].Width = 75;
+            subDgv.Columns[5].HeaderText = "IT PIC";
+            subDgv.Columns[5].Width = 75;
+            subDgv.Columns[6].HeaderText = "Request Form No.";
+            subDgv.Columns[6].Width = 120;
+            subDgv.Columns[7].HeaderText = "Request Form Description";
+            subDgv.Columns[7].Width = 300;
+            subDgv.Columns[8].Width = 85;
+            subDgv.Columns[9].HeaderText = "Expected Finish Date";
+            subDgv.Columns[9].Width = 90;
+            subDgv.Columns[10].HeaderText = "Estimate Stage Finish";
+            subDgv.Columns[10].Width = 90;
+            subDgv.Columns[11].HeaderText = "Actual Finish Date";
+            subDgv.Columns[11].Width = 90;
+            subDgv.Columns[12].HeaderText = "IT Est. give Test Date";
+            subDgv.Columns[12].Width = 90;
+            subDgv.Columns[13].HeaderText = "Apply Date";
+            subDgv.Columns[13].Width = 90;
+            subDgv.Columns[14].Width = 300;
+            subDgv.Columns[16].HeaderText = "Upload Time";
+            subDgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            subDgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -256,18 +280,21 @@ namespace ExOne
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            if (level == 2)
+            switch(level)
             {
-                Get1List();
-                //level--;
-            }
-            else if (level == 1)
-            {
-                Form1_Load(this, null);
-            }
-            else if (level == 3)
-            {
-                Get2List();
+                case 1:
+                    Get1List();
+                    break;
+                case 2:
+                    subDgv.Visible = false;
+                    hierarchy.Text = null;
+                    level--;
+                    break;
+                case 3:
+                    Get2List();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -275,20 +302,22 @@ namespace ExOne
         {
             if (e.RowIndex == -1)
                 return;
-            if (level == 1)
+            
+            _id = Guid.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+            Get2List();
+            
+        }
+
+        private void subDgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (level == 2)
             {
-                //label1.Text = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-                _id = Guid.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
-                Get2List();
-                //level++;
-            }
-            else if (level == 2)
-            {
-                _id = Guid.Parse(dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString());
+                _id = Guid.Parse(subDgv.Rows[e.RowIndex].Cells[0].Value.ToString());
                 Get3List();
                 //level++;
             }
         }
+
     }
 
     public class L1list
