@@ -85,7 +85,7 @@ namespace ExOne
             this.dataGridView1.Location = new System.Drawing.Point(37, 56);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(825, 520);
+            this.dataGridView1.Size = new System.Drawing.Size(1319, 520);
             this.dataGridView1.TabIndex = 5;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
             // 
@@ -115,7 +115,7 @@ namespace ExOne
             this.subDgv.Location = new System.Drawing.Point(37, 56);
             this.subDgv.Name = "subDgv";
             this.subDgv.ReadOnly = true;
-            this.subDgv.Size = new System.Drawing.Size(825, 520);
+            this.subDgv.Size = new System.Drawing.Size(1319, 520);
             this.subDgv.TabIndex = 10;
             this.subDgv.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.subDgv_CellDoubleClick);
             // 
@@ -130,7 +130,7 @@ namespace ExOne
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(919, 665);
+            this.ClientSize = new System.Drawing.Size(1396, 665);
             this.Controls.Add(this.hierarchy);
             this.Controls.Add(this.subDgv);
             this.Controls.Add(this.BackBtn);
