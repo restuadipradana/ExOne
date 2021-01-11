@@ -165,6 +165,12 @@ namespace ExOne
 
             foreach (ProjList _id in detx)
             {
+                DateTime dt;
+                _id.ApplyDate = DateTime.TryParse(_id.ApplyDate, out dt ) ? Convert.ToDateTime(_id.ApplyDate).ToString("MM/dd/yyyy") : _id.ApplyDate;
+                _id.TestDateEstimate = DateTime.TryParse(_id.TestDateEstimate, out dt) ? Convert.ToDateTime(_id.TestDateEstimate).ToString("MM/dd/yyyy") : _id.TestDateEstimate;
+                _id.StageActualFinish = DateTime.TryParse(_id.StageActualFinish, out dt) ? Convert.ToDateTime(_id.StageActualFinish).ToString("MM/dd/yyyy") : _id.StageActualFinish;
+                _id.StageEstimateFinish = DateTime.TryParse(_id.StageEstimateFinish, out dt) ? Convert.ToDateTime(_id.StageEstimateFinish).ToString("MM/dd/yyyy") : _id.StageEstimateFinish;
+                _id.UserExpectedDate = DateTime.TryParse(_id.UserExpectedDate, out dt) ? Convert.ToDateTime(_id.UserExpectedDate).ToString("MM/dd/yyyy") : _id.UserExpectedDate;
                 list.Add(_id);
             }
             
@@ -218,7 +224,7 @@ namespace ExOne
                      select b).ToList();
             var ad = ac.FirstOrDefault();
             
-            hierarchy.Text = ad.ReqFormNo + " - " + (ad.ReqFormDesc.Length > 20 ? ad.ReqFormDesc.Substring(0, 20) : ad.ReqFormDesc);
+            hierarchy.Text = ad.ReqFormNo + " -> " + (ad.ReqFormDesc.Length > 20 ? ad.ReqFormDesc.Substring(0, 20) : ad.ReqFormDesc);
             subDgv.DataSource = null;
             subDgv.Refresh();
             subDgv.DataSource = ac;
@@ -234,6 +240,7 @@ namespace ExOne
                 .Where(x => x.ReqFormNo == selected.ReqFormNo)
                 .Where(x => x.ReqFormDesc == selected.ReqFormDesc)
                 .OrderByDescending(y => y.CreatedAt).ToList();
+            hierarchy.Text = hierarchy.Text + " -> " + selected.Stage;
             subDgv.DataSource = null;
             subDgv.Refresh();
             subDgv.DataSource = getData3;
@@ -276,6 +283,19 @@ namespace ExOne
         private void Form1_Load(object sender, EventArgs e)
         {
             Get1List();
+            string aj = "Cong";// "2020/11/10";
+            string am;
+            DateTime ak;
+            if (DateTime.TryParse(aj, out ak))
+            {
+                am = aj;
+                // or do some count process (convert dt and count)
+            }
+            else
+            {
+                am = aj;
+            }
+
         }
 
         private void BackBtn_Click(object sender, EventArgs e)
@@ -310,6 +330,8 @@ namespace ExOne
 
         private void subDgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex == -1)
+                return;
             if (level == 2)
             {
                 _id = Guid.Parse(subDgv.Rows[e.RowIndex].Cells[0].Value.ToString());
